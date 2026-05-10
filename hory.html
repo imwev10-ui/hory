@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hawra Store | متجر حوراء</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-pink: #ff85a2;
+            --glass: rgba(255, 255, 255, 0.12);
+            --text-color: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: #121212;
+            color: var(--text-color);
+        }
+
+        /* Video Background */
+        #video-bg {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+            object-fit: cover;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
+
+        /* Music Controls */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px var(--main-pink);
+            color: var(--main-pink);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .tab-btn {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--main-pink);
+            transform: translateY(-3px);
+        }
+
+        .section-content {
+            display: none;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+
+        .item-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--main-pink);
+        }
+
+        .price {
+            display: block;
+            margin: 10px 0;
+            color: var(--main-pink);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .buy-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .buy-btn:hover { background: var(--main-pink); color: #fff; }
+
+        /* Glass Modal Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-box h2 { color: var(--main-pink); margin-bottom: 15px; }
+        
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .modal-btns { display: flex; gap: 10px; }
+        .confirm-btn { flex: 2; background: var(--main-pink); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .cancel-btn { flex: 1; background: rgba(255,255,255,0.1); color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        footer { text-align: center; padding: 40px; font-size: 0.9rem; opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop id="video-bg">
+        <source src="hhedit.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <audio id="site-music" loop>
+        <source src="lastofus.m4a" type="audio/mp4">
+    </audio>
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="music-icon">🎵</span>
+        <small id="music-status">تشغيل الموسيقى</small>
+    </div>
+
+    <header>
+        <h1>HAWRA</h1>
+        <p>مرحباً بكِ في عالم التميز</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'design')">قسم التصميم</button>
+            <button class="tab-btn" onclick="openTab(event, 'stars')">نجوم تلي</button>
+            <button class="tab-btn" onclick="openTab(event, 'boost')">رشق تلي</button>
+            <button class="tab-btn" onclick="openTab(event, 'views')">مشاهدات ولايكات</button>
+            <button class="tab-btn" onclick="openTab(event, 'cards')">البطائق</button>
+            <button class="tab-btn" onclick="openTab(event, 'games')">شحن الألعاب</button>
+        </div>
+
+        <!-- Sections -->
+        <div id="design" class="section-content active">
+            <div class="grid">
+                <div class="item-card"><h3>افتار قناة/كروب</h3><span class="price">$3</span><button class="buy-btn" onclick="openOrderModal('افتار قناة/كروب', '$3', 'التصميم')">اطلب الآن</button></div>
+                <div class="item-card"><h3>افتار متحرك</h3><span class="price">$5</span><button class="buy-btn" onclick="openOrderModal('افتار متحرك', '$5', 'التصميم')">اطلب الآن</button></div>
+                <div class="item-card"><h3>فيديو إعلان</h3><span class="price">$25</span><button class="buy-btn" onclick="openOrderModal('فيديو إعلان', '$25', 'التصميم')">اطلب الآن</button></div>
+                <div class="item-card"><h3>أغاني وراب</h3><span class="price">$5</span><button class="buy-btn" onclick="openOrderModal('أغاني وراب', '$5', 'التصميم')">اطلب الآن</button></div>
+            </div>
+        </div>
+
+        <div id="stars" class="section-content">
+            <div class="grid">
+                <div class="item-card"><h3>100 نجمة تليجرام</h3><span class="price">$3</span><button class="buy-btn" onclick="openOrderModal('100 نجمة', '$3', 'نجوم تلي')">اطلب الآن</button></div>
+            </div>
+        </div>
+
+        <div id="boost" class="section-content">
+            <div class="grid">
+                <div class="item-card"><h3>1K رشق</h3><span class="price">$1</span><button class="buy-btn" onclick="openOrderModal('1K رشق', '$1', 'رشق تلي')">اطلب الآن</button></div>
+                <div class="item-card"><h3>10K رشق</h3><span class="price">7 آسيا</span><button class="buy-btn" onclick="openOrderModal('10K رشق', '7 آسيا', 'رشق تلي')">اطلب الآن</button></div>
+                <div class="item-card"><h3>20K رشق</h3><span class="price">14 آسيا</span><button class="buy-btn" onclick="openOrderModal('20K رشق', '14 آسيا', 'رشق تلي')">اطلب الآن</button></div>
+                <div class="item-card"><h3>30K رشق</h3><span class="price">21 آسيا</span><button class="buy-btn" onclick="openOrderModal('30K رشق', '21 آسيا', 'رشق تلي')">اطلب الآن</button></div>
+            </div>
+        </div>
+
+        <div id="views" class="section-content">
+            <div class="grid">
+                <div class="item-card"><h3>تليجرام (10K)</h3><p>مشاهدات + لايكات</p><span class="price">$1</span><button class="buy-btn" onclick="openOrderModal('تليجرام 10K', '$1', 'المشاهدات')">اطلب الآن</button></div>
+                <div class="item-card"><h3>انستا (10K)</h3><p>مشاهدات + لايكات</p><span class="price">$2</span><button class="buy-btn" onclick="openOrderModal('انستا 10K', '$2', 'المشاهدات')">اطلب الآن</button></div>
+                <div class="item-card"><h3>تيك توك (20K)</h3><p>مشاهدات + لايكات</p><span class="price">$1</span><button class="buy-btn" onclick="openOrderModal('تيك توك 20K', '$1', 'المشاهدات')">اطلب الآن</button></div>
+            </div>
+        </div>
+
+        <div id="cards" class="section-content"><div class="grid" id="cards-grid"></div></div>
+        <div id="games" class="section-content"><div class="grid" id="games-grid"></div></div>
+    </div>
+
+    <!-- Glass Modal -->
+    <div id="orderModal" class="modal-overlay">
+        <div class="modal-box">
+            <h2>فاتورة الطلب</h2>
+            <p id="modal-item-info" style="margin-bottom: 10px;"></p>
+            <input type="text" id="userTelegram" class="modal-input" placeholder="اكتبي يوزرك (بدون @)">
+            <div class="modal-btns">
+                <button class="confirm-btn" onclick="completeOrder()">إرسال للتليجرام</button>
+                <button class="cancel-btn" onclick="closeModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>جميع الحقوق محفوظة لمتجر حوراء &copy; 2026</p></footer>
+
+    <script>
+        const music = document.getElementById('site-music');
+        const musicStatus = document.getElementById('music-status');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) { music.pause(); musicStatus.innerText = "تشغيل الموسيقى"; } 
+            else { music.play(); musicStatus.innerText = "إيقاف الموسيقى"; }
+            isPlaying = !isPlaying;
+        }
+
+        function openTab(evt, tabName) {
+            let contents = document.getElementsByClassName("section-content");
+            for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
+            let buttons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove("active");
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        let currentItem = {};
+
+        function openOrderModal(name, price, category) {
+            currentItem = { name, price, category };
+            document.getElementById('modal-item-info').innerText = `المنتج: ${name} | السعر: ${price}`;
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+            document.getElementById('userTelegram').value = '';
+        }
+
+        function completeOrder() {
+            const userHandle = document.getElementById('userTelegram').value;
+            if (!userHandle) {
+                alert("لطفاً، ادخلي اليوزر الخاص بكِ!");
+                return;
+            }
+
+            // Create professional invoice text
+            const invoiceText = `--- فاتورة شراء جديدة ---%0A👤 يوزر الزبون: @${userHandle.replace('@', '')}%0A📦 الطلب: ${currentItem.name}%0A💰 السعر: ${currentItem.price}%0A📍 من قسم: ${currentItem.category}%0A---------------------------`;
+
+            const telegramUrl = `https://t.me/uhory?text=${invoiceText}`;
+            
+            // Redirect with direct link simulation
+            window.location.href = telegramUrl;
+            closeModal();
+        }
+
+        const cardsData = [
+            { n: 'آيتونز $2', p: '$4' }, { n: 'نينتيندو $10', p: '$16' },
+            { n: 'بليزارد 20€', p: '$35' }, { n: 'بليزارد $20', p: '$33' },
+            { n: 'فورتنايت 2800', p: '$40' }, { n: 'فورتنايت 1000', p: '$18' },
+            { n: 'بلايستيشن $10', p: '$17' }, { n: 'بلايستيشن $25', p: '$35' },
+            { n: 'فالورانت 10€', p: '$19' }, { n: 'فالورانت 5€', p: '$11' },
+            { n: 'ستيم $5', p: '$9' }, { n: 'كرانشي رول شهر', p: '$15' },
+            { n: 'رايوت جيمز 5€', p: '$10' }, { n: 'روبلوكس $10', p: '$16' },
+            { n: 'أمازون $5', p: '$10' }, { n: 'أمازون $25', p: '$40' },
+            { n: 'ريزر كولد $5', p: '$8' }, { n: 'ريزر كولد $2', p: '$4' },
+            { n: 'ليج اوف ليجند 10€', p: '$17' }, { n: 'ليج اوف ليجند 20€', p: '$35' }
+        ];
+
+        const gamesData = [
+            { n: 'دلتا فورس 60', p: '$2' }, { n: 'ارينا بريك آوت 66', p: '$2' },
+            { n: 'جينشن $5 جينسيس', p: '$10' }, { n: 'ببجي 60 UC', p: '$2' },
+            { n: 'ببجي 325 UC', p: '$8' }, { n: 'ببجي 660 UC', p: '$16' },
+            { n: 'ببجي 985 UC', p: '$25' }, { n: 'كول اوف ديوتي 80', p: '$2' },
+            { n: 'لودو 830 جوهرة', p: '$5' }
+        ];
+
+        function renderGrid(data, elementId, category) {
+            const grid = document.getElementById(elementId);
+            data.forEach(item => {
+                grid.innerHTML += `
+                    <div class="item-card">
+                        <h3>${item.n}</h3>
+                        <span class="price">${item.p}</span>
+                        <button class="buy-btn" onclick="openOrderModal('${item.n}', '${item.p}', '${category}')">اطلب الآن</button>
+                    </div>
+                `;
+            });
+        }
+
+        renderGrid(cardsData, 'cards-grid', 'البطائق');
+        renderGrid(gamesData, 'games-grid', 'شحن الألعاب');
+    </script>
+</body>
+</html>
